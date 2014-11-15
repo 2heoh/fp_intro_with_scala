@@ -43,7 +43,7 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h2>Intruduction in FP with Scala</h2>
+					<h2>Intruduction in Functional Programming with Scala</h2>
 					<p>
 						<small>Сергей Лобин<br />  
 						<a href="mailto:ifitwasi@gmal.com">ifitwasi@gmal.com</a><br /> 
@@ -52,18 +52,69 @@
 					</p>
 				</section>
 				<section>
-					<h2>Plan</h2>
+					<h2>Agenda</h2>
 					<ul>
+						<li>History</li>
 						<li>Functions</li>
-						<li>Type system</li>
-						<li>Data</li>
 						<li>Control structures</li>
 						<li>Lazy evaluations</li>
 					</ul>
 				</section>
 
 				<section>
+					<section>
+						<img src="http://www.peoples.ru/science/mathematics/alonzo_church/church_3472.jpg" />
+						<p>Alonzo Church (1903–1995)</p>
+						<p>1930 Lambda calculus <a href="https://ru.wikipedia.org/wiki/%D0%9B%D1%8F%D0%BC%D0%B1%D0%B4%D0%B0-%D0%B8%D1%81%D1%87%D0%B8%D1%81%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5">(wikipedia)</a></p>
+					</section>
+					<section>
+						<img src="http://www.aiportal.ru/images/articles/RS_alan_mathison_turing_01.jpg" />
+						<p>Alan Turing (1912—1954)
+						<p>1946 ACE <a href="https://ru.wikipedia.org/wiki/ACE">(wikipedia)</a></p>
+					</section>
+					<section>
+						<img src="http://www.myrobot.ru/_dir/images/history/mccarthy.jpg" />
+						<p>John McCarthy (1927—2011)</p>
+						<p>1958 LISP (2nd ever, 1st functional, garbage collection)</p>
+					</section>
+					<section>
+						<img src="http://www.adeptis.ru/vinci/john_backus7.jpg" />
+						<p>John Backus (1924—2007)</p>
+						<p>1970s FP (higher-order functions and reasoning)</p>
+					</section>
+					<section>
+						<img src="http://www.valleytalk.org/wp-content/uploads/2008/03/milner.gif" />
+						<p>Robin Milner (1934-2010)</p>
+						<p>1979 ML (type inference and polymorphic types)</p>
+					</section>
+					<section>
+						<img src="http://www.codemesh.io/codemesh2013/img/speakers/david-turner.jpg" />
+						<p>David Turner (1946-)</p>
+						<p>1985 Miranda (lazy functional language)</p>
+					</section>
+					<section>
+						<p>1986 Erlang </p>
+						<p>1987 Haskell</p>
+						<p>2003 Scala</p>
+						<p>2010 F#</p>
+						<p>2014 Java 8</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<p>Alonzo Church:</p>
+						<p>λx → x+1</p>
+						<p>&nbsp;</p>
+						<p>Simon Marlow (Haskell):</p>
+						<p><pre><code haskell>\ x -> x + 1</code></pre></p>
+						<p>&nbsp;</p>
+						<p>Martin Odersky (Scala):</p>
+						<p><pre><code scala>(x: Int) => x+1</code></pre></p>
+					</section>
+					<section>
 					<h2>Functions</h2>
+
 					<pre><code scala>// regular function
 def adder(a: Int, b: Int): Int =  {
   a + b
@@ -73,10 +124,10 @@ def adder(a: Int, b: Int) = a + b
 
 adder(2, 2) // Int = 4
 
-// anonymous function
-val f = (a: Int, b: Int) => a + b
-f(2, 2) // Int = 4
+val lambda = (a: Int, b: Int) => a + b
+lambda(2, 2) // Int = 4
 </code></pre>
+</section>
 				</section>
 
 				<section>
@@ -92,23 +143,6 @@ def pureShout(word: String): String = word + "!"
 print(pureShout("hey")) // "hey!"
 </code></pre>
 				</section>
-
-				<section>
-					<h2>Type system</h2>
-				    <pre><code scala>// Static strong type system
-def tl(l: String) = l.toList() match{
-	case Nil 	=> throw new Exception("empty list")
-	case a::as 	=> as
-}				    	
-				    </code></pre>
-				</section>	
-
-
-				<section>
-					<h2>Higher order functions</h2>
-				    <pre><code scala>
-				    </code></pre>
-				</section>	
 
 				<section>
 					<section>
@@ -136,26 +170,50 @@ scala> i = 6
 				</section>
 
 				<section>
+				<section>
 					<h2>Recursion</h2>
-				    <pre><code scala>
-				    </code></pre>
+				    <pre><code scala>def factorial(n: Int): Int = 
+  if(n > 0) factorial(n-1) * n else 1
+
+factorial(10) // 3628800
+
+factorial(100000) //java.lang.StackOverflowError</code></pre>
 				</section>
 
 				<section>
 					<h2>Tail recursion</h2>
-				    <pre><code scala>
-				    </code></pre>
-				</section>
+				    <pre><code scala>def betterFactorial(x: Int) = {
+    // auxiliary function				    
+    def loop(n: Int, acc: Int): Int = 
+      if(n <= 0) 1 else loop(n-1, acc*n) 
 
+    loop(x-1, x)
+}
+
+betterFactorial(100000) // </code></pre>
+				</section>
+				</section>
 				<section>
 					<h2>Pattern matching</h2>
-				    <pre><code scala>
-				    </code></pre>
-				</section>				
+				    <pre><code scala>def bestFactorial(n: Int, acc: Int = 0): Int = n match{
+    case 0 => 1
+    case n => bestFactorial(n-1, acc*n)
+}
 
+bestFactorial(100000) // </code></pre>
+				</section>			
+
+				<section>
+					<h2>Higher order functions</h2>
+				    <pre><code scala>def bestestFactorial(n: Int) = (1 to n).foldRight(1)(_*_)
+				    </code></pre>
+				</section>	
 
 				<section>
 					<h1>The End</h1>
+				</section>
+				<section>
+					<h1>Questions?</h1>
 				</section>
 
 			</div>
