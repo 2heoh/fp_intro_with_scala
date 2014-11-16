@@ -52,6 +52,32 @@
 					</p>
 				</section>
 				<section>
+				<section>
+				<h1>scala</h1>
+				<p><pre><code scala>def qsort(l: List[Int]): List[Int] = l match {
+  case List() => List()
+  case _      => l.filter(_ < l.head) ++ List(l.head) ++ l.filter(_ > l.head)
+}</code></pre></section>
+				<section>
+				<h1>go</h1>
+				<pre><code go>func qsort(a []int) []int {
+  if len(a) < 2 { return a }
+  left, right := 0, len(a) - 1
+  pivotIndex := rand.Int() % len(a)
+  a[pivotIndex], a[right] = a[right], a[pivotIndex]
+  for i := range a {
+    if a[i] < a[right] {
+      a[i], a[left] = a[left], a[i]
+      left++
+    }
+  }
+  a[left], a[right] = a[right], a[left]
+  qsort(a[:left])
+  qsort(a[left + 1:])
+  return a
+}</code></pre></section>
+				</section>
+				<section data-background="#007777">
 					<h2>Agenda</h2>
 					<ul>
 						<li>History</li>
@@ -60,8 +86,7 @@
 						<li>Lazy evaluations</li>
 					</ul>
 				</section>
-
-				<section>
+				<section data-background="#007777">
 					<section>
 						<img src="http://www.peoples.ru/science/mathematics/alonzo_church/church_3472.jpg" />
 						<p>Alonzo Church (1903–1995)</p>
@@ -85,7 +110,7 @@
 					<section>
 						<img src="http://www.valleytalk.org/wp-content/uploads/2008/03/milner.gif" />
 						<p>Robin Milner (1934-2010)</p>
-						<p>1979 ML (type inference and polymorphic types)</p>
+						<p>1973 ML (type inference and polymorphic types)</p>
 					</section>
 					<section>
 						<img src="http://www.codemesh.io/codemesh2013/img/speakers/david-turner.jpg" />
@@ -94,20 +119,26 @@
 					</section>
 					<section>
 						<p>1986 Erlang </p>
-						<p>1987 Haskell</p>
-						<p>2003 Scala</p>
-						<p>2010 F#</p>
-						<p>2014 Java 8</p>
+						<p class="fragment">1987 Haskell</p>
+						<p class="fragment">2003 Scala</p>
+						<p class="fragment">2010 F#</p>
+						<p class="fragment">2014 <a href="http://hacklang.org/">Hack (HHVM)</a></p>
+						<p class="fragment">2014 Java 8</p>
+					</section>
+					<section>
+						<img src="http://fprog.ru/2009/issue1/alex-ott-literature-overview/language-history.pdf.png">
 					</section>
 				</section>
 
 				<section>
 					<section>
 						<p>Alonzo Church:</p>
-						<p>λx → x+1</p>
+						<blockquote>
+						λx → x+1
+						</blockquote>
 						<p>&nbsp;</p>
-						<p>Simon Marlow (Haskell):</p>
-						<p><pre><code haskell>\ x -> x + 1</code></pre></p>
+						<p>Simon Marlow:</p>
+						<p><pre><code haskell>\ x -> x + 1 -- haskell</code></pre></p>
 						<p>&nbsp;</p>
 						<p>Martin Odersky (Scala):</p>
 						<p><pre><code scala>(x: Int) => x+1</code></pre></p>
@@ -172,40 +203,60 @@ scala> i = 6
 				<section>
 				<section>
 					<h2>Recursion</h2>
-				    <pre><code scala>def factorial(n: Int): Int = 
+				    <pre><code scala>def factorial(n: BigInt): BigInt = 
   if(n > 0) factorial(n-1) * n else 1
 
-factorial(10) // 3628800
+factorial(10)    // 3628800
 
-factorial(100000) //java.lang.StackOverflowError</code></pre>
+factorial(10000) // java.lang.StackOverflowError</code></pre>
 				</section>
 
 				<section>
 					<h2>Tail recursion</h2>
-				    <pre><code scala>def betterFactorial(x: Int) = {
+				    <pre><code scala>def betterFactorial(x: BigInt) = {
     // auxiliary function				    
-    def loop(n: Int, acc: Int): Int = 
-      if(n <= 0) 1 else loop(n-1, acc*n) 
+    def loop(n: BigInt, acc: BigInt): BigInt = 
+      if(n <= 0) acc else loop(n-1, acc*n) 
 
-    loop(x-1, x)
+    loop(x, 1)
 }
 
-betterFactorial(100000) // </code></pre>
+betterFactorial(10000)  // 28462596809170545189064132121198688901480514017027
+99230794179994274411340003764443772990786757784775815884062142317528830042339
+94015351873905242116138271617481982419982759241828925978789812425312059465996
+25986706560161572036032397926328736717055741975962099479720346153698119897092
+61127750048419884541047554464244213657330307670362882580354896746111709736957
+86036701910715127305872810411586405612811653853259684258259955846881464304255
+89836649317059251717204276597407446133400054194052462303436869154059404066227
+82824837151203832217864462718382292389963899282722187970245938769380309462733
+22925705554596900278752822425443480211275590191694254290289169072190970836905
+39873747452483372899521802363282741217040268086769210451555840567172555372015
+85213282903427998981844931361064038148...</code></pre>
 				</section>
 				</section>
 				<section>
 					<h2>Pattern matching</h2>
-				    <pre><code scala>def bestFactorial(n: Int, acc: Int = 0): Int = n match{
+				    <pre><code scala>def bestFactorial(n: BigInt, acc: BigInt = 1): BigInt = n match{
     case 0 => 1
     case n => bestFactorial(n-1, acc*n)
 }
 
-bestFactorial(100000) // </code></pre>
+bestFactorial(10000)    // 28462596809170545189064132121198688901480514017027
+99230794179994274411340003764443772990786757784775815884062142317528830042339
+94015351873905242116138271617481982419982759241828925978789812425312059465996
+25986706560161572036032397926328736717055741975962099479720346153698119897092
+61127750048419884541047554464244213657330307670362882580354896746111709736957
+86036701910715127305872810411586405612811653853259684258259955846881464304255
+89836649317059251717204276597407446133400054194052462303436869154059404066227
+82824837151203832217864462718382292389963899282722187970245938769380309462733
+22925705554596900278752822425443480211275590191694254290289169072190970836905
+39873747452483372899521802363282741217040268086769210451555840567172555372015
+85213282903427998981844931361064038148...</code></pre>
 				</section>			
 
-				<section>
+				<section data-background="#8c4738">
 					<h2>Higher order functions</h2>
-				    <pre><code scala>def bestestFactorial(n: Int) = (1 to n).foldRight(1)(_*_)
+				    <pre><code scala>def bestestFactorial(n: BigInt) = (1 to n).foldRight(1)(_*_)
 				    </code></pre>
 				</section>	
 
