@@ -45,21 +45,20 @@
 				<section>
 					<h2>Intruduction in Functional Programming with Scala</h2>
 					<p>
-						<small>Сергей Лобин<br />  
-						<a href="mailto:ifitwasi@gmal.com">ifitwasi@gmal.com</a><br /> 
+						<small><a href="mailto:ifitwasi@gmal.com">ifitwasi@gmal.com</a><br /> 
 						<a href="https://plus.google.com/+SergeyLobin">+SergeyLobin</a> 
 						</small>
 					</p>
 				</section>
 				<section>
 				<section>
-				<h1>scala</h1>
+				<h3>scala</h3>
 				<p><pre><code scala>def qsort(l: List[Int]): List[Int] = l match {
   case List() => List()
   case _      => l.filter(_ < l.head) ++ List(l.head) ++ l.filter(_ > l.head)
 }</code></pre></section>
 				<section>
-				<h1>go</h1>
+				<h3>go</h3>
 				<pre><code go>func qsort(a []int) []int {
   if len(a) < 2 { return a }
   left, right := 0, len(a) - 1
@@ -83,6 +82,9 @@
 						<li>History</li>
 						<li>Functions</li>
 						<li>Control structures</li>
+						<li>Pattern matching</li>
+						<li>Functional types</li>
+						<li>Higher order functions</li>
 						<li>Lazy evaluations</li>
 					</ul>
 				</section>
@@ -137,72 +139,54 @@
 						λx → x+1
 						</blockquote>
 						<p>&nbsp;</p>
-						<p>Simon Marlow:</p>
-						<p><pre><code haskell>\ x -> x + 1 -- haskell</code></pre></p>
+						<span class="fragment">
+							<p>Simon Marlow:</p>
+							<p><pre><code haskell>\ x -> x + 1 -- haskell</code></pre></p>
+						</span>
 						<p>&nbsp;</p>
-						<p>Martin Odersky (Scala):</p>
-						<p><pre><code scala>(x: Int) => x+1</code></pre></p>
+						<span class="fragment">
+							<p>Martin Odersky:</p>
+							<p><pre><code scala>(x: Int) => x + 1 // Scala</code></pre></p>
+						</span>
 					</section>
 					<section>
-					<h2>Functions</h2>
-
-					<pre><code scala>// regular function
+						<h2>Functions</h2>
+						<h3>Pure</h3>
+						<p></p>
+						<img src="http://leonrenkema.nl/wp-content/uploads/2013/09/function_machine2-svg.png" />
+						<pre><code scala>// regular function
 def adder(a: Int, b: Int): Int =  {
   a + b
 }
-// or
-def adder(a: Int, b: Int) = a + b
 
-adder(2, 2) // Int = 4
-
-val lambda = (a: Int, b: Int) => a + b
-lambda(2, 2) // Int = 4
-</code></pre>
-</section>
-				</section>
-
-				<section>
-					<h2>Pure functions</h2>
-				    <pre><code scala>//has side-effects
-def shout(word: String): Unit = {
-  println(word + "!")
-}
-shout("hey") // "hey!"
-
-//no side-effects
-def pureShout(word: String): String = word + "!"
-print(pureShout("hey")) // "hey!"
-</code></pre>
-				</section>
-
-				<section>
+adder(2, 2) // 4</code></pre>
+					</section>
 					<section>
-						<h2>Immutability</h2>
-					    <pre><code scala>
-scala> val i = 5
-i: Int = 5
+						<h3>Composition</h3>
+						<blockquote>f(g(x)) = (f &#9675; g)(x)</blockquote>
+						<p>&nbsp;</p>						
+						
+<pre><code scala>def double(x: Int) = x * 2
+double(2) // Int = 4
 
-scala> i = 6
-&lt;console>:8: error: reassignment to val
-      i = 6
-		^
-					    </code></pre>
-				    </section>
-				    <section>
-					    <pre><code scala>
-					    	val a = List(1, 2, 3) // 1 :: 2 :: 3 :: Nil
-					    </code></pre>
-					    <img src="img/immutable01.png" />
-					    <pre><code scala>
-					    	val b = 0 :: a  // 0 :: 1 :: 2 :: 3 :: Nil
-					    </code></pre>
-				    	<img src="img/immutable02.png" />
-				    </section>
+val quad = double _ compose double _ // (double _).compose(double _)
+quad(2) // Int = 8
+</code></pre>
+					</section>
+					<section>
+						<h3>Curring & Partial application</h3>
+						<pre><code scala>def a(x: Int)(y: Int) = a + b
+a(2)(2) // Int = 4
+
+val plus2 = a(2)_ 
+
+plus2(2) // Int = 4</code></pre>
+					</section>					
 				</section>
 
 				<section>
 				<section>
-					<h2>Recursion</h2>
+					<h3>Recursion</h3>
 				    <pre><code scala>def factorial(n: BigInt): BigInt = 
   if(n > 0) factorial(n-1) * n else 1
 
@@ -212,7 +196,7 @@ factorial(10000) // java.lang.StackOverflowError</code></pre>
 				</section>
 
 				<section>
-					<h2>Tail recursion</h2>
+					<h3>Tail recursion</h3>
 				    <pre><code scala>def betterFactorial(x: BigInt) = {
     // auxiliary function				    
     def loop(n: BigInt, acc: BigInt): BigInt = 
@@ -233,10 +217,11 @@ betterFactorial(10000)  // 28462596809170545189064132121198688901480514017027
 39873747452483372899521802363282741217040268086769210451555840567172555372015
 85213282903427998981844931361064038148...</code></pre>
 				</section>
+
 				</section>
 				<section>
-					<h2>Pattern matching</h2>
-				    <pre><code scala>def bestFactorial(n: BigInt, acc: BigInt = 1): BigInt = n match{
+					<h3>Pattern matching</h3>
+				    <pre><code scala>def bestFactorial(n: BigInt, acc: BigInt = 1): BigInt = n match{ 
     case 0 => 1
     case n => bestFactorial(n-1, acc*n)
 }
@@ -254,19 +239,258 @@ bestFactorial(10000)    // 28462596809170545189064132121198688901480514017027
 85213282903427998981844931361064038148...</code></pre>
 				</section>			
 
-				<section data-background="#8c4738">
-					<h2>Higher order functions</h2>
-				    <pre><code scala>def bestestFactorial(n: BigInt) = (1 to n).foldRight(1)(_*_)
-				    </code></pre>
+				<section>
+					<section>
+						<img src="https://www.safaribooksonline.com/library/view/programming-scala/9780596801908/httpatomoreillycomsourceoreillyimages322250.png">
+					</section>
+					<section>
+						<img src="img/collections.immutable.png" border="0" />						
+					</section>
+				    <section>
+				    	<h3>Functional containers</h3>
+				    	<pre><code scala>val l = List(1,2,3)           // l: List[Int] = List(1, 2, 3)
+
+val l = 1 :: 2 :: 3 :: Nil    // l: List[Int] = List(1, 2, 3)
+
+val l = Nil.::(3).::(2).::(1) // l: List[Int] = List(1, 2, 3)
+
+l.head   // Int = 1
+l.tail   // List[Int] = List(2, 3)
+l.length // Int = 3
+</code></pre>
+				    </section>
+
+					<section>
+						<h3>Immutability</h3>
+					    <pre><code scala>
+scala> val i = 5
+i: Int = 5
+
+scala> i = 6
+&lt;console>:8: error: reassignment to val
+      i = 6
+		^
+					    </code></pre>
+				    </section>
+				    <section>
+					    <pre><code scala>
+					    	val a = List(1, 2, 3) // 1 :: 2 :: 3 :: Nil
+					    </code></pre>
+					    <img src="img/immutable01.png" />
+					    <pre><code scala>
+					    	val b = 0 :: a  // 0 :: 1 :: 2 :: 3 :: Nil
+					    </code></pre>
+				    	<img src="img/immutable02.png" />
+				    </section>
+				    <section>
+				    	<h3>Operations on lists</h3>
+				    	<pre><code scala>def myLength[A](l: List[A]): Int = l match {
+  case Nil   => 0
+  case x::xs => 1 + myLength(xs)
+}
+
+myLength(List(1,2,3)) // Int = 3
+
+def filterOdd(l: List[Int]): List[Int] = l match {
+  case Nil => List()
+  case x::xs if (x % 2 != 0) => x :: filterOdd(xs)
+  case x::xs => filterOdd(xs)
+}
+
+filterOdd(List(1,2,3)) // List[Int] = List(1, 3)
+</code></pre>
+				    </section>
+				    <section>
+				    	<h3>Streams</h3>
+ 				    	<pre><code scala>val s = Stream.from(0) // Stream(0, ?)
+s.toList               // java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+s take 10              // Stream(0, ?)
+(s take 10).toList     // List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+				    	</code></pre>
+				    </section>
+
+				</section>
+				<section>
+					<section>
+					<h3>Higher order functions</h3>
+					<pre><code scala>// map
+val l = List(1, 2, 3)      // List[Int] = List(1, 2, 3)
+l.map( x => x * x )        // List[Int] = List(1, 4, 9)
+
+// filter
+l.filter( p => p % 2 != 0) // List[Int] = List(1, 3)
+
+1 to 100 takeWhile(_ < 10) // Range(1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+1 to 100 dropWhile(_ <= 90) //Range(91, 92, 93, 94, 95, 96, 97, 98, 99, 100)
+</code></pre>
+					</section>
+					<section data-background="#8c4738">
+					    <pre><code scala>def bestestFactorial(n: BigInt) = (1 to n).foldRight(1)(_*_)
+
+bestestFactorial(10) // Int = 3628800
+(1 to 10).foldRight(1)(_*_)
+Range(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).foldRight(1)((x, acc) => x * acc)
+Range(2, 3, 4, 5, 6, 7, 8, 9, 10).foldRight(1)( 1 * 1 )
+Range(3, 4, 5, 6, 7, 8, 9, 10).foldRight(1)( 1 * 2 )
+Range(4, 5, 6, 7, 8, 9, 10).foldRight(2)( 2 * 3 )
+...
+Range(10).foldRight(40320)( 40320 * 9 )
+362880 * 10
+3628800
+</code></pre>
+   </section>
+   					<section>
+   						<pre><code scala>
+   *        (1 * (2 * (3 * (4 * (5 * (6 * (7 * (8 * (9 * (10 * 1))))))))))
+  / \
+ 1   *
+    / \					       					
+   2   *
+      / \
+     3   *
+        / \ 
+       4  ...
+          / \
+         8   *
+            / \
+           9   *
+              / \
+            10   1	
+   						</code></pre>
+   					</section>
+   					<section>
+   					<pre><code scala>val nums = List(4,2,9,3,1)
+val sum  = ( 0 /: nums ) (_+_) // nums.foldLeft(0)(_+_)
+
+       _ + _     _     _     _     _
+      / / | |   | |   | |   | |   | |
+     / /  | |   | |   | |   | |   | |
+    /0/   |4|   |2|   |9|   |3|   |1|
+   / /    | |   | |   | |   | |   | |
+  /_/     |_|   |_|   |_|   |_|   |_|
+         \____________nums___________/
+
+             _ + _     _     _     _
+            / / | |   | |   | |   | |
+           / /  | |   | |   | |   | |
+  0 + 4 = /4/   |2|   |9|   |3|   |1|
+         / /    | |   | |   | |   | |
+        /_/     |_|   |_|   |_|   |_|
+
+                   _ + _     _     _
+                  / / | |   | |   | |
+                 / /  | |   | |   | |
+((0 + 4) + 2) = /6/   |9|   |3|   |1|
+               / /    | |   | |   | |
+              /_/     |_|   |_|   |_|
+
+                         _ + _     _
+                        / / | |   | |
+                       / /  | |   | |
+(((0 + 4) + 2) + 9) = 15/   |3|   |1|
+                     / /    | |   | |
+                    /_/     |_|   |_|
+
+                               _ + _
+                              / / | |
+                             / /  | |
+((((0 + 4) + 2) + 9) + 3) = 18/   |1|
+                           / /    | |
+                          /_/     |_|
+
+                                      _
+                                     / /
+                                    / /
+((((((0 + 4) + 2) + 9) + 3) + 1) = 19/
+                                  / /
+                                 /_/
+   					</code></pre>
+   					<small><a href="http://nicholassterling.wordpress.com/2010/07/28/an-intuition-about-scalas-operator-foldleft/">source</a></small>	
+   					</section>
+
+				</section>
+				<section>
+					<section>
+						<pre><code scala>val m = Map('a' -> 2, 'b' -> 1) // Map[Char,Int] = Map(a -> 2, b -> 1)
+m('a') // Int = 2
+
+m('c') // java.util.NoSuchElementException: key not found: c
+
+m.get('c') // Option[Int] = None
+m.get('a') // Option[Int] = Some(2)</code></pre>
+					</section>
+					<section>
+						<pre><code scala>def safeGet(m: Map[Char, Int], key: Char): Int = m.get(key) match {
+  case None         => -1
+  case Some(x: Int) => x
+}
+
+safeGet(m, 'a') // Int = 2
+safeGet(m, 'c') // Int = -1
+
+def safeTail[A](l: List[A]): List[A] = l match {
+  case Nil     => List()
+  case x :: xs => xs
+} 
+
+safeTail(List())      // List[Nothing] = List()
+safeTail(List(1,2,3)) // List[Int] = List(2, 3)</code></pre>
+					  <p class="fragment">Option & List are Monads</p>
+					</section>
+				</section>
+				<section>
+					<h3>Lazy Evaluations</h3>
+					<pre><code scala>lazy val fibs: Stream[Int] = 0 #:: 1 #:: 
+  fibs.zip(fibs.tail).map { n => n._1 + n._2 } // Stream[Int] = &lt;lazy>
+
+fibs take 10 toList // List[Int] = List(0, 1, 1, 2, 3, 5, 8, 13, 21, 34) 
+					</code></pre>
 				</section>	
 
 				<section>
-					<h1>The End</h1>
-				</section>
-				<section>
 					<h1>Questions?</h1>
 				</section>
+				<section>
+					<h3>Learn more</h3>
+					<table>
+					  <tr>
+					    <td>
+					      <a href="https://www.coursera.org/course/progfun"><img src="https://d1z850dzhxs7de.cloudfront.net/topics/progfun/small-icon.hover.png"> Functional Programming Principles in Scala</a>
 
+						</td>
+						<td><a href="https://www.coursera.org/course/reactive"><img src="https://d15cw65ipctsrr.cloudfront.net/cd/9621270b46581ec73e52c6fb16aa02/principles-reactive-v1.0.jpg" /> Principles of Reactive Programming</a>
+						</td>
+						<td><a href="https://courses.edx.org/courses/DelftX/FP101x/3T2014/info"><img src="https://courses.edx.org/c4x/DelftX/FP101x/asset/images_course_image.jpg" /> FP101x Introduction to Functional Programming</a></td>
+					  </tr>
+					</table>
+				</section>
+				<section>
+					<h3>books</h3>
+					<table cellspacing="30">
+					  <tr>
+					  	<td align="center">
+					  	<a href="http://learnyouahaskell.com/">
+					  	<img src="http://media.nostarch.com/sites/default/files/imagecache/product_full/lyah.png" width=150 height="200" /><br /> Learn You a Haskell for Great Good!</a></td>
+						<td align="center"><img src="http://ecx.images-amazon.com/images/I/51w1YjEaT-L._SX258_BO1,204,203,200_.jpg" width=190 height="200"/><br /> Programming<br />in Scala</td>
+						<td align="center"><img src="http://akamaicovers.oreilly.com/images/0636920013754/cat.gif"  width=150 height="200" /><br />Clojure<br />Programming</td>
+						<td><a href="http://dshevchenko.biz/hs.html"><img src="https://bookmate.com/assets/documents-covers/49/04/vwGSdMuD-large.jpg?ts=1395082159" width=150 height="200"><br />О Haskell по-человечески</a>
+					  </tr>
+					</table>
+				</section>
+				<section>
+					<h3>links</h3>
+					<ul>
+						<li><a href="https://github.com/scalaz/scalaz">https://github.com/scalaz/scalaz</a>
+						<li><a href="http://www.berniepope.id.au/docs/scala_monads.pdf">http://www.berniepope.id.au/docs/scala_monads.pdf</a></li>
+						<li><a href="https://github.com/anton-k/ru-neophyte-guide-to-scala">https://github.com/anton-k/ru-neophyte-guide-to-scala</a></li>
+						<li><a href="https://github.com/garu/scala-for-perl5-programmers">https://github.com/garu/scala-for-perl5-programmers</a></li>
+						<li><a href="http://fprog.ru/">http://fprog.ru/</a></li>
+						<li><a href="http://slides.com/sergeylobin/scala">http://slides.com/sergeylobin/scala</a></li>
+					</ul>
+				</section>
 			</div>
 
 		</div>
