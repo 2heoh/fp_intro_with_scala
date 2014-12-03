@@ -14,21 +14,22 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/reveal.min.css"> 
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/print/pdf.css">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
 
 		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
 		<script>
-			if( window.location.search.match( /print-pdf/gi ) ) {
-				var link = document.createElement( 'link' );
-				link.rel = 'stylesheet';
-				link.type = 'text/css';
-				link.href = 'css/print/pdf.css';
-				document.getElementsByTagName( 'head' )[0].appendChild( link );
-			}
+		  if( window.location.search.match( /print-pdf/gi ) ) {
+		    var link = document.createElement( 'link' );
+		    link.rel = 'stylesheet';
+		    link.type = 'text/css';
+		    link.href = 'reveal.js/css/print/pdf.css';
+		    document.getElementsByTagName( 'head' )[0].appendChild( link );
+		  }
 		</script>
 
 		<!--[if lt IE 9]>
@@ -55,7 +56,10 @@
 				<h3>scala</h3>
 				<p><pre><code scala>def qsort(l: List[Int]): List[Int] = l match {
   case List() => List()
-  case _      => l.filter(_ < l.head) ++ List(l.head) ++ l.filter(_ > l.head)
+  case _      => 
+    qsort(l.filter(_ < l.head)) 
+      ++ List(l.head) 
+      ++ qsort(l.filter(_ > l.head))
 }</code></pre></section>
 				<section>
 				<h3>go</h3>
@@ -139,27 +143,27 @@
 						λx → x+1
 						</blockquote>
 						<p>&nbsp;</p>
-						<span class="fragment">
+						<p>
 							<p>Simon Marlow:</p>
 							<p><pre><code haskell>\ x -> x + 1 -- haskell</code></pre></p>
-						</span>
+						</p>
 						<p>&nbsp;</p>
-						<span class="fragment">
+						<p>
 							<p>Martin Odersky:</p>
 							<p><pre><code scala>(x: Int) => x + 1 // Scala</code></pre></p>
-						</span>
+						</p>
 					</section>
 					<section>
 						<h2>Functions</h2>
 						<h3>Pure</h3>
 						<p></p>
 						<img src="http://leonrenkema.nl/wp-content/uploads/2013/09/function_machine2-svg.png" />
-						<pre><code scala>// regular function
-def adder(a: Int, b: Int): Int =  {
+						<pre><code scala>
+def adder(a: Int, b: Int): Int = {
   a + b
 }
 
-adder(2, 2) // 4</code></pre>
+adder(2, 2) // Int = 4</code></pre>
 					</section>
 					<section>
 						<h3>Composition</h3>
@@ -175,7 +179,7 @@ quad(2) // Int = 8
 					</section>
 					<section>
 						<h3>Curring & Partial application</h3>
-						<pre><code scala>def a(x: Int)(y: Int) = a + b
+						<pre><code scala>def a(x: Int)(y: Int) = x + y
 a(2)(2) // Int = 4
 
 val plus2 = a(2)_ 
@@ -274,11 +278,11 @@ scala> i = 6
 				    </section>
 				    <section>
 					    <pre><code scala>
-					    	val a = List(1, 2, 3) // 1 :: 2 :: 3 :: Nil
+val a = List(1, 2, 3) // 1 :: 2 :: 3 :: Nil
 					    </code></pre>
 					    <img src="img/immutable01.png" />
 					    <pre><code scala>
-					    	val b = 0 :: a  // 0 :: 1 :: 2 :: 3 :: Nil
+val b = 0 :: a  // 0 :: 1 :: 2 :: 3 :: Nil
 					    </code></pre>
 				    	<img src="img/immutable02.png" />
 				    </section>
@@ -306,9 +310,7 @@ filterOdd(List(1,2,3)) // List[Int] = List(1, 3)
 s.toList               // java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 s take 10              // Stream(0, ?)
-(s take 10).toList     // List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-
-				    	</code></pre>
+(s take 10).toList     // List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)</code></pre>
 				    </section>
 
 				</section>
@@ -333,14 +335,12 @@ l.filter( p => p % 2 != 0) // List[Int] = List(1, 3)
 bestestFactorial(10) // Int = 3628800
 (1 to 10).foldRight(1)(_*_)
 Range(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).foldRight(1)((x, acc) => x * acc)
-Range(2, 3, 4, 5, 6, 7, 8, 9, 10).foldRight(1)( 1 * 1 )
-Range(3, 4, 5, 6, 7, 8, 9, 10).foldRight(1)( 1 * 2 )
-Range(4, 5, 6, 7, 8, 9, 10).foldRight(2)( 2 * 3 )
+Range(1, 2, 3, 4, 5, 6, 7, 8, 9).foldRight(1)( 1 * 10 )
+Range(1, 2, 3, 4, 5, 6, 7, 8).foldRight(10)( 10 * 9 )
+Range(1, 2, 3, 4, 5, 6, 7).foldRight(90)( 90 * 8 )
 ...
-Range(10).foldRight(40320)( 40320 * 9 )
-362880 * 10
-3628800
-</code></pre>
+Range(1).foldRight(1814400)( 1814400 * 2 )
+3628800 * 1</code></pre>
    </section>
    					<section>
    						<pre><code scala>
@@ -430,6 +430,10 @@ m.get('a') // Option[Int] = Some(2)</code></pre>
 
 safeGet(m, 'a') // Int = 2
 safeGet(m, 'c') // Int = -1
+						</code></pre>
+					</section>
+					<section>
+						<pre><code scala>List().tail // java.lang.UnsupportedOperationException: tail of empty list
 
 def safeTail[A](l: List[A]): List[A] = l match {
   case Nil     => List()
@@ -443,11 +447,13 @@ safeTail(List(1,2,3)) // List[Int] = List(2, 3)</code></pre>
 				</section>
 				<section>
 					<h3>Lazy Evaluations</h3>
-					<pre><code scala>lazy val fibs: Stream[Int] = 0 #:: 1 #:: 
+					<pre><code scala>val z = List('a', 'b', 'c') zip List(1, 2, 3) 
+// List[(Char, Int)] = List((a,1), (b,2), (c,3))
+
+lazy val fibs: Stream[Int] = 0 #:: 1 #:: 
   fibs.zip(fibs.tail).map { n => n._1 + n._2 } // Stream[Int] = &lt;lazy>
 
-fibs take 10 toList // List[Int] = List(0, 1, 1, 2, 3, 5, 8, 13, 21, 34) 
-					</code></pre>
+fibs take 10 toList // List[Int] = List(0, 1, 1, 2, 3, 5, 8, 13, 21, 34) </code></pre>
 				</section>	
 
 				<section>
